@@ -1,0 +1,79 @@
+#include <ArduinoRobot.h>
+#include <Wire.h>
+#include <SPI.h>
+ 
+int maxspeed;
+int pos;
+int ontheline;
+ 
+void setup() {
+  // initialize the robot
+  Robot.begin();
+
+  // initialize the screen
+  Robot.beginTFT();
+
+  int val = 255;
+  // print the value to the TFT screen
+  Robot.debugPrint(val);
+  // small delay - I don't want it to run like hell the moment I turn on power
+  delay(3000);
+  // set the same speed on both of the robot's wheels
+  Robot.motorsWrite(val, val);
+  delay(2000);
+  Robot.motorsStop(); //Fast stop the robot
+  
+}
+ 
+void loop() {
+  int maxspd = Robot.knobRead() ; // the value is in the range [0:1023]
+  // map the value into an useful range
+  maxspd = map(maxspd, 0, 1023, 50, 500); // minimum speed is 50
+ 
+  //this function needs about 10 ms to complete
+  //Robot.updateIR fonction qui lit les 5 capteurs infrarouge
+  Robot.updateIR();
+  
+  pos = 5; // no line at all
+  ontheline = 1024;
+  for (int i = 0; i < 5; i++) {
+    // White background, black line 
+    // the lowest value read is from the sensor over the line
+    if (Robot.IRarray[i] < ontheline){
+       ontheline = Robot.IRarray[i];
+       pos = i;
+    }
+  }
+ 
+  //one last check: have we lost the line
+  if (Robot.IRarray[pos] > 500){
+      pos = 5;
+  }
+ 
+  switch (pos) {
+    case 0:    // Sharp turn right
+      Robot.motorsStop();
+      Robot.motorsWrite(maxspd, -maxspd);
+      break;
+    case 1:    // Turn right
+      Robot.motorsStop();
+      Robot.motorsWrite(maxspd, 0 );
+      break;
+    case 2:    // Go forward
+      Robot.motorsStop();
+      Robot.motorsWrite(maxspd, maxspd);
+      break;
+    case 3:    // Turn left
+      Robot.motorsStop();
+      Robot.motorsWrite(0, maxspd);
+      break;
+    case 4:    // Sharp turn right
+      Robot.motorsStop();
+      Robot.motorsWrite(-maxspd, maxspd);
+      break;
+    case 5:    // No line. Go slowly left 
+      Robot.motorsStop();
+      Robot.motorsWrite(50, 150);
+      break;
+  }
+}
