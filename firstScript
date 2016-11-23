@@ -1,0 +1,74 @@
+#include <ArduinoRobot.h>
+#include <Wire.h>
+#include <SPI.h>
+
+int pos;
+int vitesse;
+
+void setup()
+{
+	Robot.begin();
+	Robot.beginTFT();
+	Serial.begin(9600);
+
+
+
+	vitesse = Robot.knobRead() ; // cette valeur est compris entre 0 et 1023
+  	vitesse = map(vit, 0, 1023, 50, 255); // la fonction va permettre de changer la valeur de 0 à 1023 vers une valeur de 0 à 255 (mise à l echelle)
+   
+}
+
+void loop()
+{
+	Robot.updateIR(); 
+
+        pos = 5;
+	int ontheline;
+	ontheline = 1024;
+	for (int i = 0; i < 5; i++) {
+    	if (Robot.IRarray[i] < ontheline){
+    		ontheline = Robot.IRarray[i];
+    		pos = i;
+    
+    
+    
+	if (pos == 5){
+		stop();
+	}
+
+
+        if(pos == 1 || pos == 2 || pos == 3){ 
+        avancer();
+        }
+        
+        void stop() 
+        { 
+	Robot.motorsWrite(0,0); 
+	delay(1000); 
+        } 
+
+        
+        void avancer() 
+        { 
+	Robot.motorsWrite(vitesse,vitesse); 
+	delay(1000); 
+        } 
+        
+        void turnright() 
+        { 
+	Robot.motorsWrite(vitesse,0); 
+	delay(1000); 
+        }  
+
+        void turnleft() 
+        { 
+	Robot.motorsWrite(0,vitesse); 
+	delay(1000);  
+        } 
+  
+        
+        
+        
+        
+        
+        
