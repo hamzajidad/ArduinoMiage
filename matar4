@@ -1,0 +1,92 @@
+
+
+/*
+ Turn Test
+ 
+ Check if the robot turns a certain amount of degrees.
+ 
+ Circuit:
+ * Arduino Robot
+ 
+ created 1 May 2013
+ by X. Yang
+ modified 12 May 2013
+ by D. Cuartielles
+ 
+ This example is in the public domain
+ */
+
+#include <ArduinoRobot.h>
+#include <Wire.h>
+#include <SPI.h> 
+
+
+// Fonction d'initialisation 
+
+void setup() {
+  // initialize the robot
+  Robot.begin();
+}
+
+
+
+// Fonction principale qui fait tourner le programme 
+
+void loop(){
+  
+// appel de la fonction qui s'en occupe du déplacement 
+if(les IR0 et IR4 sont eteints){
+  Avancer(2,1);
+}
+if(IR4 allumé){
+  
+  // tourner a droite 
+  Avancer(2,-2);
+  break;
+  
+
+}
+  if (IR0 allumé){
+    
+    // tourner a gauche 
+    Avancer(-2,2);
+    break;
+  }
+  
+}
+
+
+// Définissons toutes nos fonctions ici
+
+
+
+// la fonction qui permet le robot de se déplacer 
+void Avancer(float directionLeft, float directionRight){
+  Robot.motorsWrite(255*directionLeft, 255*directionRight);
+}
+
+// fonction qui détecte les objets à une certaine distance 
+
+float detecterObjet() {
+  // on lit la valeur du capteur ici
+  int valeurDuCapteur = Robot.analogRead(sensorPin);
+  //convertissons cet capteur en cm
+  float distance_cm = valeurDuCapteur*1.27;
+  return distance_cm;  
+  
+}
+
+
+// essaye de finir l'algo mettre au propre 
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
