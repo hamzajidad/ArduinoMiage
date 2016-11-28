@@ -3,72 +3,87 @@
 #include <SPI.h>
 
 int pos;
-int vitesse;
+int speed;
 
 void setup()
 {
-	Robot.begin();
-	Robot.beginTFT();
-	Serial.begin(9600);
+   Robot.begin();
+   Robot.beginTFT();
+   Serial.begin(9600);
 
 
 
-	vitesse = Robot.knobRead() ; // cette valeur est compris entre 0 et 1023
-  	vitesse = map(vit, 0, 1023, 50, 255); // la fonction va permettre de changer la valeur de 0 à 1023 vers une valeur de 0 à 255 (mise à l echelle)
+   speed = Robot.knobRead() ; // cette valeur est compris entre 0 et 1023
+   speed = map(vit, 0, 1023, 50, 255); // la fonction va permettre de changer la valeur de 0 à 1023 vers une valeur de 0 à 255 (mise à l echelle)
    
 }
 
 void loop()
 {
-	Robot.updateIR(); 
+   Robot.updateIR(); 
 
         pos = 5;
-	int ontheline;
-	ontheline = 1024;
-	for (int i = 0; i < 5; i++) {
-    	if (Robot.IRarray[i] < ontheline){
-    		ontheline = Robot.IRarray[i];
-    		pos = i;
+   int ontheline;
+   ontheline = 1024;
+   for (int i = 0; i < 5; i++) {
+      if (Robot.IRarray[i] < ontheline){
+         ontheline = Robot.IRarray[i];
+         pos = i;
     
     
     
-	if (pos == 5){
-		stop();
-	}
+        if (pos == 5){
+         stop();
+        }
 
 
         if(pos == 1 || pos == 2 || pos == 3){ 
-        avancer();
+        goforward();
+        }
+
+        else if(pos == 0 && pos == 1){
+          turnright();
         }
         
+        else if(pos == 3 || pos == 4){
+          turnleft();
+        }
+
+        //else if()
+
+        else {
+          // tourne en rond
+        }
+
         void stop() 
         { 
-	Robot.motorsWrite(0,0); 
-	delay(1000); 
+          Robot.motorsWrite(0,0); // ou Robot.motorsStop()
+          delay(1000); 
         } 
 
         
-        void avancer() 
+        void goforward() 
         { 
-	Robot.motorsWrite(vitesse,vitesse); 
-	delay(1000); 
+          Robot.motorsWrite(speed,speed); 
+          delay(1000); 
         } 
         
         void turnright() 
         { 
-	Robot.motorsWrite(vitesse,0); 
-	delay(1000); 
+            Robot.motorsWrite(speed,0); 
+            delay(1000); 
         }  
 
         void turnleft() 
         { 
-	Robot.motorsWrite(0,vitesse); 
-	delay(1000);  
+          Robot.motorsWrite(0,speed); 
+          delay(1000);  
         } 
-  
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
+}
