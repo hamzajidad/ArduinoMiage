@@ -1,0 +1,167 @@
+
+
+// les biblio en arduino
+
+
+#include <ArduinoRobot.h>
+#include <Wire.h>
+#include <SPI.h>
+ 
+ // Déclarons toutes nos variables qu'on veut ici
+ 
+ int pod =0; // initialisation à zéro
+ //pas oublier d'ajouter 
+ 
+ // initialisation du robot 
+      void setup() {
+  
+                              // Début de la fonction setup
+                               
+                               int IRO = IRarray[0];
+                               int IR1 = IRarray[1];
+                               int IR2 = IRarray[2];
+                               int IR3 = IRarray[3];
+                               int IR4 = IRarray[4];
+  
+                              // initialize the robot
+                                    Robot.begin();
+                             // initialize the screen
+                                    Robot.beginTFT();
+                            // Pour communiquer avec l'ordinateur 
+                                    Serial.begin(14400);
+                                    
+                    
+                          // affichage des capteurs avec leurs couleurs sur le screen 
+   
+                         // capteur IR0
+  
+                                  Robot.stroke(20,30,0); // couleur capteur 
+                                  Robot.textSize(3);     // taille
+                                  Robot.text("IR0: ",0,20); // affichage 
+  
+                        // capteur IR1
+  
+                                 Robot.stroke(30,20,0); // couleur 
+                                 Robot.textSize(3);     // taille
+                                 Robot.text("IR1: ",0,30); // affichage
+  
+                      // Capteur IR2
+  
+                               Robot.stroke(40,30,0); // couleur 
+                               Robot.textSize(3);     //taille
+                               Robot.text("IR2: ",0,40); // affichage 
+  
+                       // Capteur IR3
+  
+                              Robot.stroke(40,20,0); // couleur
+                              Robot.textSize(3);    // taille
+                              Robot.text("IR3: ",15,25); // affichage 
+  
+                    // Capteur IR4
+  
+  
+                            Robot.stroke(25,35,0); // couleur 
+                            Robot.textSize(3);     // taille
+                            Robot.text("IR0: ",0,120); // affichage
+  
+                 // fin de la fonction setup
+                 
+                 // Pensons à gérer le cas du potentiomètre 
+                 
+                 pod = Robot.knobRead() ; // cette fonction met dans la variable pod une valeur comprise entre 0 et 1023
+  	         pod = map(pod, 0, 1023, 50, 255); // la fonction fait la convertion des valeurs comprises entre 0 et 1023 vers 50 et 255
+  
+}
+
+
+              // Faisons tourner notre Algo avec la fonction loop()
+
+                  void loop(){
+                    
+            //Début la fonction 
+  
+            // ici toutes les valeurs des capteurs récupérées et mises dans le tableau IRarray  
+                   Robot.updateIR();
+                   
+           // Essayons de manipuler ces valeurs pour faire bouger le robot en parcourant ce fameux tableau IRarray
+                   for(int i=0;i<=4;i++){  
+                     
+           // début de la boucle for  
+      
+           
+                    if(Robot.IRarray[1] < 400 && Robot.IRarray[2] < 400 && Robot.IRarray[3] < 400 && Robot.IRarray[0] < 100 && Robot.IRarray[4] < 100) 
+                           {
+                                // Début d'un if pour dire le robot de continuer en suivant la ligne droite(ligne noir)
+                                 Serial.print(Robot.IRarray[1]);  // affichage des valeurs des capteurs 
+                                 Serial.print(Robot.IRarray[2]);
+                                 Serial.print(Robot.IRarray[3]);
+                                 Robot.motorsWrite(150,150);
+                               // fin du if( cas qui s'en occupe le déplacement du robot en ligne droite )
+                           }
+                  
+                  
+                    else if(Robot.IRarray[4] < 400 && Robot.IRarray[0] < 100 )
+                          {
+                              // Poour que le robot tourne à droite
+                              Serial.print(Robot.IRarray[4]); // affichage des valeurs des capteurs 
+                              Serial.print(Robot.IRarray[0]);
+                              Robot.motorsStop();  // reste a voir si on a besoin qu'il s'arrete d'abord pour tourner 
+                              Robot.motorsWrite(150,-150);
+                          }
+
+                      else if(Robot.IRarray[0] < 400 && Robot.IRarray[4] < 100)
+                          {
+                              // Pour tourner à gauche
+                              Serial.print(Robot.IRarray[0]); // affichage des valeurs de capteurs 
+                              Serial.print(Robot.IRarray[4]);
+                              Robot.motorsStop();  // reste a voir si on a besoin qu'il s'arrete d'abord pour tourner 
+                              Robot.motorsWrite(-150,150);
+                          }
+
+                      else if(Robot.IRarray[0] < 100 && Robot.IRarray[1] < 100 && Robot.IRarray[2] < 100 && Robot.IRarray[3] < 100  && Robot.IRarray[4] < 100)
+                          {
+                              // les capteurs ne détectent rien le robot rencontre un blanc
+                              Serial.print(Robot.IRarray[0]);
+                              Serial.print(Robot.IRarray[1]);
+                              Serial.print(Robot.IRarray[2]);    // affichage des valeurs des capteurs 
+                              Serial.print(Robot.IRarray[3]);
+                              Serial.print(Robot.IRarray[4]);
+                              Robot.turn(90);  // le robot fait un demi tour donc mis chemin normalement les les trois capteurs du milieu doivent s'allumer à nouveau
+                              Robot.motorsWrite(150,150);
+                          }
+                      else if( Robot.IRarray[0] < 400 && Robot.IRarray[1] < 400 && Robot.IRarray[2] < 400 && Robot.IRarray[3] < 400  && Robot.IRarray[4] < 400)
+                          { 
+                            Serial.print(Robot.IRarray[0]);
+                            Serial.print(Robot.IRarray[1]);
+                            Serial.print(Robot.IRarray[2]); // affichage des valeurs des capteurs 
+                            Serial.print(Robot.IRarray[3]);
+                            Serial.print(Robot.IRarray[4]);
+                            Robot.motorsStop();
+                            Serial.print("Bienvenue au Terminus");
+                          }
+                       else
+                          {
+                            Serial.print("Je ne suis pas encore sur le terrain de Jeux");
+                          }
+                          
+                       
+ // Fin de la boucle for (parcours tableau)              
+ }
+                         
+// fin de la fonction loop           
+ }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
