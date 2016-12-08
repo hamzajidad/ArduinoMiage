@@ -1,0 +1,114 @@
+
+
+#include <ArduinoRobot.h>
+#include <Wire.h>
+#include <SPI.h>
+
+int valueIR=500;
+int value;
+
+void setup(){
+  Robot.begin();
+  Robot.beginTFT();
+}
+void loop(){
+  // store the sensor information into the array 
+  Robot.updateIR();
+  direct_follow();
+  affichageIR();
+}
+
+
+// direct line 
+void direct_follow()
+{
+  int maxspd = Robot.knobRead() ; // valeur comprise entre  [0:1023]
+  // je fais la conversion ici
+  maxspd = map(maxspd, 0, 1023, 50, 255); // la valeur minimale est égale à 10
+  
+// les capteurs du milieu
+if((Robot.IRarray[1]<valueIR && Robot.IRarray[2]<valueIR && Robot.IRarray[3]<valueIR)&& Robot.IRarray[0]>valueIR &&  Robot.IRarray[4]>valueIR)
+  {
+    // avance tout droit 
+    Robot.motorsWrite(maxspd, maxspd);
+    
+  }
+ // tourner droit
+ else if((Robot.IRarray[0]<valueIR && Robot.IRarray[1] <valueIR) && (Robot.IRarray[3]<valueIR && Robot.IRarray[4]>valueIR))
+  { 
+    
+    Robot.motorsStop();
+    delay(1000);
+    Robot.motorsWrite(-maxspd, maxspd);
+    delay(2000);
+  }
+   // first droit 
+ else if(Robot.IRarray[0]>valueIR && Robot.IRarray[1]<valueIR && Robot.IRarray[2]<valueIR && Robot.IRarray[3]>valueIR && Robot.IRarray[4]>valueIR)
+  { 
+    // gauche
+    Robot.motorsStop();
+    delay(20);
+    Robot.motorsWrite(maxspd*0.6, maxspd);
+  }
+ // droite 2
+ else if((Robot.IRarray[0]<valueIR || Robot.IRarray[1] <valueIR) && (Robot.IRarray[3]>valueIR && Robot.IRarray[4]>valueIR))
+  { 
+    // gauche also
+    Robot.motorsStop();
+    delay(20);
+    Robot.motorsWrite(maxspd*0.4, maxspd);
+  }
+  // tourner gauche 
+  else  if((Robot.IRarray[3]<valueIR && Robot.IRarray[4] <valueIR) && (Robot.IRarray[1]<valueIR && Robot.IRarray[0]>valueIR))
+  {
+    // tourne gauche 
+     Robot.motorsStop();
+     delay(20);
+     Robot.motorsWrite(maxspd, -maxspd);
+     delay(60);
+   }
+ // first gauche 
+ else if(Robot.IRarray[0]>valueIR && Robot.IRarray[1]>valueIR && Robot.IRarray[2]<valueIR && Robot.IRarray[3]<valueIR && Robot.IRarray[4]>valueIR)
+  { 
+    // tourne droit aussi
+    Robot.motorsStop();
+    delay(20);
+    Robot.motorsWrite(maxspd, maxspd*0.6);
+  }
+ //
+  else  if((Robot.IRarray[3]<valueIR || Robot.IRarray[4] <valueIR) && (Robot.IRarray[0]>valueIR && Robot.IRarray[1]>valueIR))
+  {
+   
+   Robot.motorsStop();
+   delay(2000);
+   Robot.motorsWrite(maxspd, maxspd*0.4);
+  }
+ 
+ {
+   Robot.motorsStop();
+   Robot.motorsWrite(-maxspd, maxspd);
+ }
+}
+
+
+
+
+void affichageIR() {
+   
+  Robot.textSize(2);
+ 
+  for(int i=0,j=0; i<5; i++,j+=20){
+    value=Robot.IRarray[i];
+    Robot.stroke(0, 0, 0);      
+    Robot.text(value, 10, j);  
+  }
+ 
+ for(int i=0,j=0; i<5; i++,j+=20){ //delete figures 
+    value=Robot.IRarray[i];
+    Robot.stroke(0, 250, 0);     
+    Robot.text(value, 10, j); 
+    
+    
+  }
+  
+}
