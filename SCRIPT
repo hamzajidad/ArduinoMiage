@@ -41,15 +41,15 @@ void loop()
 
 
         if(pos == 1 || pos == 2 || pos == 3){ 
-        goforward();
+        followLine();
         }
 
         else if(pos == 0 && pos == 1){
-          turnright();
+          turnRight();
         }
         
         else if(pos == 3 || pos == 4){
-          turnleft();
+          turnLeft();
         }
 
         else
