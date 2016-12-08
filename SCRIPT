@@ -1,0 +1,147 @@
+#include <ArduinoRobot.h>
+#include <Wire.h>
+#include <SPI.h>
+
+int pos;
+int speed;
+
+void setup()
+{
+   Robot.begin();
+   Robot.beginTFT();
+   Serial.begin(9600);
+
+
+
+
+   
+}
+
+void loop()
+{
+   speed = Robot.knobRead() ; //  est compris entre 0 et 1023
+   speed = map(vit, 0, 1023, 50, 255); // changer la valeur de 0 à 1023 vers une valeur de 0 à 255 
+   
+   Robot.updateIR(); 
+
+   /* pos = 5;
+    int ontheline;
+    ontheline = 1024;
+    for (int i = 0; i < 5; i++) {
+      if (Robot.IRarray[i] > 500){
+         Robot.text();
+         pos = i;*/
+
+        //int myArray[5]= {0,1,2,3,4};
+
+          
+        if (pos == 5){
+         stop();
+        }
+
+
+        if(pos == 1 || pos == 2 || pos == 3){ 
+        goforward();
+        }
+
+        else if(pos == 0 && pos == 1){
+          turnright();
+        }
+        
+        else if(pos == 3 || pos == 4){
+          turnleft();
+        }
+
+        else
+          followLine(ir0,ir1,ir2,ir3,ir4);
+          turnRight(ir0,ir1,ir2,ir3,ir4);
+          turnLeft(ir0,ir1,ir2,ir3,ir4);        
+
+
+        void stop() 
+        { 
+          Robot.motorsWrite(0,0); // ou Robot.motorsStop()
+          delay(1000); 
+        } 
+
+        
+        void forward() 
+        { 
+          Robot.motorsWrite(speed,speed); 
+          delay(1000); 
+        } 
+
+        void back
+        
+        void turnright() 
+        { 
+            Robot.motorsWrite(speed,0); 
+            delay(1000); 
+        }  
+
+        void turnleft() 
+        { 
+          Robot.motorsWrite(0,speed); 
+          delay(1000);  
+        }
+
+/* Fonctions qui vont faire bouger le robot en fonction des détecteurs */
+
+/* les fonctions ce ressemble turnleft fait tourner les roues 
+tout simplement à gauche alors que turnLeft les fait tourner en fonction des 
+Capteurs */
+
+/*Tout d'abord je dois définir mes détecteurs à l'aide de la méthide Robot.Irray[]*/
+ir0=Robot.IRarray[0];
+ir1=Robot.IRarray[1];
+ir2=Robot.IRarray[2];
+ir3=Robot.IRarray[3];
+ir4=Robot.IRarray[4];
+
+
+/*Pour que le robot tourne à droite */
+
+void turnRight(int ir0,int ir1, int ir2, int ir3,int ir4)
+{
+
+  // si le premier capteur est actif et && le reste des capteurs eteint je tourne a droite si .......
+  if ((ir0<500) && ( (ir1<500 && ir2<500 & ir3<500)||(ir1<500 && ir2<500 & ir4<500) || (ir2<500 && ir3<500 && ir4<500)))
+  {    
+    turnright();   
+  }  
+  else
+  {  
+    stop(); 
+  }  
+}
+
+
+/* Pour que le robot tourne à gauche */
+void turnLeft(int ir0,int ir1, int ir2, int ir3,int ir4)
+
+// idem pour tourner a gauche
+  if ((ir4<500) && ((ir1<500 && ir2<500 & ir3<500)||(ir0<500 && ir1<500 & ir2<500) || (ir0<500 && ir1<500 && ir3<500)))
+  {    
+    turnleft();     
+  } 
+  else
+  {  
+    stop();     
+  }  
+}  
+
+/* Pour qu'il suit la ligne = aller tout droit  
+il va tout droit si 0 et 4 sont allume si 1 et 2 et 3 ou le 0 et et le 1 sont eteint et le 1 2 3 allumé  */
+ void followLine (int ir0,int ir1, int ir2, int ir3,int ir4)  
+{ 
+  if ((ir0>500 && ir4>500) && ((ir1 < 500 && ir2< 500 && ir3 < 500) || 
+  (ir1 < 500 && ir2 <500) || (ir2 <500 && ir3 <500))) 
+  { 
+    forward(); 
+  } 
+  else
+  { 
+    stop(); 
+}
+
+}       
